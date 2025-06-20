@@ -1,0 +1,21 @@
+.height {
+  height: 600px;
+}
+
+.main-height {
+  height: 550px;
+}
+
+.d-grid {
+  display: grid !important;
+  gap: 10px;
+}
+
+@media screen and (max-width:320px){
+    .user-email{
+        width: 100%;
+    }
+    .main-height{
+        height: 10%;
+    }
+}
