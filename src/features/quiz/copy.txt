@@ -96,7 +96,7 @@ const Quiz = () => {
         {!savedEmail ? (
           <div className="d-flex justify-content-center align-items-center height">
             <div>
-              <h2>Quiz App By CauselFunnel</h2>
+              <h2>Quiz App By Suzana</h2>
               <input
                 className="h-100 rounded px-3 py-1 mt-3"
                 type="email"

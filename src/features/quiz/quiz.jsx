@@ -118,7 +118,7 @@ const Quiz = () => {
         {!savedEmail ? (
           <div className="d-flex justify-content-center align-items-center height">
             <div>
-              <h2>Quiz App By CauselFunnel</h2>
+              <h2>Quiz App By Suzana</h2>
               <input
                 className="h-100 rounded px-3 py-1 mt-3"
                 type="email"
@@ -137,7 +137,9 @@ const Quiz = () => {
             </div>
           </div>
         ) : (
-          <p className="float-end fs-6 fw-bold text-success user-email">@ {savedEmail}</p>
+          <p className="float-end fs-6 fw-bold text-success user-email">
+            @ {savedEmail}
+          </p>
         )}
       </div>
       <div>
@@ -159,7 +161,13 @@ const Quiz = () => {
                   <>
                     <div className="py-2">
                       {/* <h5>{questionArr[questionIndex]?.questionIndex}</h5> */}
-                      <p className="border fw-medium p-3 rounded text-dark" data-aos="fade-zoom-in" data-aos-offset="200" data-aos-easing="ease-in-sine" data-aos-duration="600">
+                      <p
+                        className="border fw-medium p-3 rounded text-dark"
+                        data-aos="fade-zoom-in"
+                        data-aos-offset="200"
+                        data-aos-easing="ease-in-sine"
+                        data-aos-duration="600"
+                      >
                         <h6 className="fw-bold ">
                           Question {questionIndex + 1}
                         </h6>
