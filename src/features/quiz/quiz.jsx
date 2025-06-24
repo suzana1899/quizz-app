@@ -10,6 +10,12 @@ import {
 
 import Timer from "../timer/Timer";
 
+function decodeHTMLEntities(text) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = text;
+  return txt.value;
+}
+
 const Quiz = () => {
   const [email, setEmail] = React.useState(null);
   const [isValid, setIsValid] = React.useState(false);
@@ -20,15 +26,11 @@ const Quiz = () => {
   const [ansArr, setAnsArr] = React.useState([]);
 
   const validateEmail = (email) => {
-    // Regular expression for email validation
     const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-    // email against the regex pattern
     return regex.test(email);
   };
 
   const handleEmailChange = (e) => {
-    // setEmail(e.target.value);
     const inputValue = e.target.value;
     setEmail(inputValue);
     setIsValid(validateEmail(inputValue));
@@ -39,15 +41,6 @@ const Quiz = () => {
   }, [email]);
 
   const handleSaveEmail = () => {
-    // if (email.length < 1) {
-    //   alert("Please Enter email");
-    // } else {
-    // saveEmailToLocalStorage(email);
-    // setRedirectToQuiz(true);
-    // }
-
-    // savedEmail = email
-
     if (isValid && email != null) {
       saveEmailToLocalStorage(email);
       setRedirectToQuiz(true);
@@ -59,7 +52,6 @@ const Quiz = () => {
   const getQuestionHandler = async (id) => {
     await getQuestion(id)
       .then((res) => {
-        console.log("res =", res?.data?.results);
         let arr = res?.data?.results?.map((item, index) => {
           return {
             ans: "",
@@ -69,7 +61,8 @@ const Quiz = () => {
         });
 
         setAnsArr(arr);
-        let arr2 = res?.data?.results?.map((item, index) => {
+
+        let arr2 = res?.data?.results?.map((item) => {
           return {
             ...item,
             incorrect_answers: [
@@ -78,8 +71,7 @@ const Quiz = () => {
             ],
           };
         });
-        console.log("arr2", arr2);
-        // arr2=shuffleArray(arr2)
+
         setQuestionArr(arr2);
       })
       .catch((err) => {});
@@ -87,7 +79,6 @@ const Quiz = () => {
 
   const [questionIndex, setquestionIndex] = React.useState(0);
   React.useEffect(() => {
-    console.log("sdsd");
     getQuestionHandler("15");
   }, []);
   React.useEffect(() => {
@@ -99,13 +90,8 @@ const Quiz = () => {
   React.useEffect(() => {
     let arr = [...ansArr];
     if (arr[questionIndex]?.status === "unvisited") {
-      // Create a copy of the array
       const newArr = [...arr];
-
-      // Update the status property in the copied array
       newArr[questionIndex].status = "visited";
-
-      // Update the state with the new array
       setAnsArr(newArr);
     }
   }, [questionIndex]);
@@ -131,7 +117,10 @@ const Quiz = () => {
                 onClick={handleSaveEmail}
               >
                 Start Quiz{" "}
-                <i class="fa-solid fa-play" style={{ color: "#ffffff" }}></i>
+                <i
+                  className="fa-solid fa-play"
+                  style={{ color: "#ffffff" }}
+                ></i>
               </button>
               {!isValid && <p className="mt-3 ">Please Enter Valid Email</p>}
             </div>
@@ -160,7 +149,6 @@ const Quiz = () => {
                 {questionArr.length > 0 && (
                   <>
                     <div className="py-2">
-                      {/* <h5>{questionArr[questionIndex]?.questionIndex}</h5> */}
                       <p
                         className="border fw-medium p-3 rounded text-dark"
                         data-aos="fade-zoom-in"
@@ -171,7 +159,9 @@ const Quiz = () => {
                         <h6 className="fw-bold ">
                           Question {questionIndex + 1}
                         </h6>
-                        {questionArr[questionIndex]?.question}
+                        {decodeHTMLEntities(
+                          questionArr[questionIndex]?.question
+                        )}
                       </p>
                     </div>
                     <div className="d-grid">
@@ -188,28 +178,20 @@ const Quiz = () => {
                               style={{ marginRight: "10px" }}
                               value={ansArr[questionIndex]?.ans}
                               checked={ansArr[questionIndex]?.ans === value}
-                              // checked={selectedValue === value}
-
                               onChange={() => {
-                                console.log(value);
                                 let arr = [...ansArr];
                                 arr[questionIndex].ans = value;
                                 setAnsArr(arr);
 
                                 let arr2 = [...ansArr];
                                 if (arr2[questionIndex]?.status === "visited") {
-                                  // Create a copy of the array
                                   const newArr = [...arr2];
-
-                                  // Update the status property in the copied array
                                   newArr[questionIndex].status = "attempt";
-
-                                  // Update the state with the new array
                                   setAnsArr(newArr);
                                 }
                               }}
                             />
-                            {value}
+                            {decodeHTMLEntities(value)}
                           </label>
                         )
                       )}
@@ -227,7 +209,6 @@ const Quiz = () => {
                         setquestionIndex(questionIndex - 1);
                       }}
                     >
-                      {" "}
                       Prev
                     </button>
                   )}
@@ -241,13 +222,12 @@ const Quiz = () => {
                       Next
                     </button>
                   )}
-                  {questionIndex == questionArr.length - 1 && (
+                  {questionIndex === questionArr.length - 1 && (
                     <button
                       className="badge bg-success border px-4 shadow text-bg-danger"
                       onClick={() => {
                         setSubmit(true);
                         setEmail(null);
-                        // RemoveEmailFromStorage();
                       }}
                     >
                       Submit
@@ -282,12 +262,12 @@ const Quiz = () => {
                   >
                     {ansArr?.map((item, index) => {
                       return (
-                        <div>
+                        <div key={"btn" + index}>
                           <button
                             className="border-0 mb-3 ms-2 rounded-5 px-2"
                             style={{
                               background:
-                                item?.status == "attempt"
+                                item?.status === "attempt"
                                   ? "#2da94e"
                                   : "#0d6efd",
                               borderRadius:
@@ -320,7 +300,6 @@ const Quiz = () => {
           <div
             style={{
               display: "flex",
-              // border: (item?.correct_answer===ansArr[index]?.ans)?"1px solid green":"1px solid red"
             }}
           >
             <div
@@ -348,7 +327,6 @@ const Quiz = () => {
                 key={"ans" + index}
                 style={{
                   display: "flex",
-                  // border: (item?.correct_answer===ansArr[index]?.ans)?"1px solid green":"1px solid red"
                 }}
               >
                 <div
@@ -362,21 +340,13 @@ const Quiz = () => {
                         : "red",
                   }}
                 >
-                  {index + 1}) {item?.question} |{" "}
-                  {/* {item?.correct_answer === ansArr[index]?.ans ? (
-                    <i class="fa-solid fa-check" style="color: #38ad65;"></i>
-                  ) : (
-                    <i
-                      class="fa-solid fa-circle-xmark"
-                      style="color: #df4949;"
-                    ></i>
-                  )} */}
+                  {index + 1}) {decodeHTMLEntities(item?.question)} |{" "}
                 </div>
                 <div
                   className="p-3"
                   style={{ width: "25%", border: "1px solid black" }}
                 >
-                  {questionArr[index]?.correct_answer}
+                  {decodeHTMLEntities(questionArr[index]?.correct_answer)}
                 </div>
                 <div
                   className="fs-5 fw-medium  p-3"
@@ -391,12 +361,12 @@ const Quiz = () => {
             <button
               className="bg-danger border-0 fw-bold px-4 rounded-1 text-white"
               onClick={() => {
-                if (window.confirm("Are you sure to restart ?") == true) {
+                if (window.confirm("Are you sure to restart ?") === true) {
                   RemoveEmailFromStorage();
                   setEmail(null);
                   setSubmit(false);
                   setRedirectToQuiz(false);
-                  setAnsArr();
+                  setAnsArr([]);
                 }
               }}
             >
