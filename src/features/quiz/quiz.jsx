@@ -182,12 +182,16 @@ const Quiz = () => {
                                 let arr = [...ansArr];
                                 arr[questionIndex].ans = value;
                                 setAnsArr(arr);
+                                console.log("Answers array:", arr);
 
                                 let arr2 = [...ansArr];
                                 if (arr2[questionIndex]?.status === "visited") {
                                   const newArr = [...arr2];
                                   newArr[questionIndex].status = "attempt";
                                   setAnsArr(newArr);
+
+                                  console.log("Selected Answer:", value);
+                                  console.log("Answers Array:", arr);
                                 }
                               }}
                             />
@@ -226,6 +230,18 @@ const Quiz = () => {
                     <button
                       className="badge bg-success border px-4 shadow text-bg-danger"
                       onClick={() => {
+                        const unanswered = ansArr.some(
+                          (item) => item.ans === ""
+                        );
+
+                        if (unanswered) {
+                          alert(
+                            "Please answer all questions before submitting."
+                          );
+                          return;
+                        }
+                        const finalScore = CheckAns(questionArr, ansArr);
+                        setScore(finalScore);
                         setSubmit(true);
                         setEmail(null);
                       }}
@@ -297,66 +313,36 @@ const Quiz = () => {
       {submit && (
         <div>
           <h2>Score : {score}</h2>
-          <div
-            style={{
-              display: "flex",
-            }}
-          >
-            <div
-              className="alert"
-              style={{ width: "50%", border: "1px solid black" }}
-            >
-              Question
-            </div>
-            <div
-              className="alert"
-              style={{ width: "25%", border: "1px solid black" }}
-            >
-              Answer
-            </div>
-            <div
-              className="alert"
-              style={{ width: "25%", border: "1px solid black" }}
-            >
-              Status
-            </div>
+
+          {/* Header row */}
+          <div className="quiz-result-row header-row">
+            <div className="quiz-result-question">Question</div>
+            <div className="quiz-result-answer">Answer</div>
+            <div className="quiz-result-status">Status</div>
           </div>
-          {questionArr?.map((item, index) => {
-            return (
+
+          {/* Rows for each question */}
+          {questionArr?.map((item, index) => (
+            <div key={"ans" + index} className="quiz-result-row">
               <div
-                key={"ans" + index}
+                className="quiz-result-question"
                 style={{
-                  display: "flex",
+                  color:
+                    item?.correct_answer === ansArr[index]?.ans
+                      ? "green"
+                      : "red",
                 }}
               >
-                <div
-                  className="p-3 fw-medium "
-                  style={{
-                    width: "50%",
-                    border: "1px solid black",
-                    color:
-                      item?.correct_answer === ansArr[index]?.ans
-                        ? "green"
-                        : "red",
-                  }}
-                >
-                  {index + 1}) {decodeHTMLEntities(item?.question)} |{" "}
-                </div>
-                <div
-                  className="p-3"
-                  style={{ width: "25%", border: "1px solid black" }}
-                >
-                  {decodeHTMLEntities(questionArr[index]?.correct_answer)}
-                </div>
-                <div
-                  className="fs-5 fw-medium  p-3"
-                  style={{ width: "25%", border: "1px solid black" }}
-                >
-                  {ansArr[index]?.status}
-                </div>
+                {index + 1}) {decodeHTMLEntities(item?.question)} |{" "}
               </div>
-            );
-          })}
+              <div className="quiz-result-answer">
+                {decodeHTMLEntities(questionArr[index]?.correct_answer)}
+              </div>
+              <div className="quiz-result-status">{ansArr[index]?.status}</div>
+            </div>
+          ))}
+
+          {/* Buttons */}
           <div className="align-items-center d-flex justify-content-center mt-4 pb-3">
             <button
               className="bg-danger border-0 fw-bold px-4 rounded-1 text-white"
